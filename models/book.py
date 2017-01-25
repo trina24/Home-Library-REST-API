@@ -1,5 +1,6 @@
 from db import db
 
+
 class BookModel(db.Model):
     __tablename__ = 'books'
 
@@ -12,7 +13,7 @@ class BookModel(db.Model):
         self.title = title
 
     def json(self):
-        return {'id' : self.id, 'author': self.author, 'title': self.title}
+        return {'id': self.id, 'author': self.author, 'title': self.title}
 
     @classmethod
     def find_by_id(cls, id):

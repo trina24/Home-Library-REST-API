@@ -1,5 +1,6 @@
 from db import db
 
+
 class ReaderModel(db.Model):
     __tablename__ = 'readers'
 
@@ -10,7 +11,7 @@ class ReaderModel(db.Model):
         self.name = name
 
     def json(self):
-        return {'id' : self.id, 'name': self.name}
+        return {'id': self.id, 'name': self.name}
 
     @classmethod
     def find_by_id(cls, id):

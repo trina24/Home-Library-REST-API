@@ -1,6 +1,7 @@
 from db import db
 import datetime
 
+
 class LoanModel(db.Model):
     __tablename__ = 'loans'
 
@@ -35,17 +36,29 @@ class LoanModel(db.Model):
     @classmethod
     def loan_forbidden(cls, book_id, date_start):
         for loan in cls.query.filter_by(book_id=book_id).all():
-            if loan.date_end is None or (loan.date_start < date_start and loan.date_end > date_start):
+            if loan.date_end is None or (loan.date_start < date_start < loan.date_end):
                 return True
 
         return False
 
     @staticmethod
-    def dates_invalid(*args):
-        for arg in args:
-            if arg and arg > datetime.datetime.today():
-                return True
-        return False
+    def dates_invalid(loan=None, **kwargs):
+        for key, value in kwargs.items():
+            if value and value > datetime.date.today():
+                return {'message': 'Invalid dates (start and end must be at latest today).'}
+        date_start = kwargs.get('date_start')
+        date_end = kwargs.get('date_end')
+        if date_start and date_end:
+            if date_start >= date_end:
+                return {"message": "Start date must be before end date."}
+            return None
+        elif loan is None:
+            return None
+        elif (date_start and loan.date_end and date_start >= loan.date_end) or \
+                (date_end and loan.date_start >= date_end):
+            return {"message": "Start date must be before end date."}
+        else:
+            return None
 
     def save_to_db(self):
         db.session.add(self)

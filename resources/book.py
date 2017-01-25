@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.book import BookModel
 
+
 class Book(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('author',
@@ -10,19 +11,22 @@ class Book(Resource):
                         type=str,
                         required=False)
 
-    def get(self, id):
+    @staticmethod
+    def get(id):
         book = BookModel.find_by_id(id)
         if book:
             return book.json()
         return {'message': 'Book not found.'}, 404
 
-    def delete(self, id):
+    @staticmethod
+    def delete(id):
         book = BookModel.find_by_id(id)
-        if (book):
+        if book:
             book.delete_from_db()
-        return {'message' : 'Book deleted successfully.'}
+        return {'message': 'Book deleted successfully.'}
 
-    def put(self, id):
+    @staticmethod
+    def put(id):
         book = BookModel.find_by_id(id)
 
         if book:
@@ -49,13 +53,17 @@ class BookList(Resource):
                         type=str,
                         required=True,
                         help='Every book must have a title.')
-    def get(self):
+
+    @staticmethod
+    def get():
         return {'books': [book.json() for book in BookModel.query.all()]}
 
-    def post(self):
+    @staticmethod
+    def post():
         data = Book.parser.parse_args()
         if BookModel.find_by_info(**data):
-            return {"message": "A book with title '{}' written by {} already exists.".format(data['title'], data['author'])}, 400
+            return {"message": "A book with title '{}' written by {} already exists.".format(data['title'],
+                                                                                             data['author'])}, 400
 
         book = BookModel(**data)
 

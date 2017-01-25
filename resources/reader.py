@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.reader import ReaderModel
 
+
 class Reader(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('name',
@@ -8,19 +9,22 @@ class Reader(Resource):
                         required=True,
                         help='Every reader must have a name.')
 
-    def get(self, id):
+    @staticmethod
+    def get(id):
         reader = ReaderModel.find_by_id(id)
         if reader:
             return reader.json()
         return {'message': 'Reader not found.'}, 404
 
-    def delete(self, id):
+    @staticmethod
+    def delete(id):
         reader = ReaderModel.find_by_id(id)
-        if (reader):
+        if reader:
             reader.delete_from_db()
-        return {'message' : 'Reader deleted successfully.'}
+        return {'message': 'Reader deleted successfully.'}
 
-    def put(self, id):
+    @staticmethod
+    def put(id):
         reader = ReaderModel.find_by_id(id)
 
         if reader:
@@ -40,10 +44,13 @@ class ReaderList(Resource):
                         type=str,
                         required=True,
                         help='Every reader must have an author.')
-    def get(self):
+
+    @staticmethod
+    def get():
         return {'readers': [book.json() for book in ReaderModel.query.all()]}
 
-    def post(self):
+    @staticmethod
+    def post():
         data = Reader.parser.parse_args()
         if ReaderModel.find_by_name(**data):
             return {"message": "A reader with name '{}' already exists.".format(data['name'])}, 400
