@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_restplus import Api
 from flask_jwt import JWT
@@ -8,7 +10,7 @@ from resources.reader import Reader, ReaderList
 from resources.loan import *
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://lvxewobqvpmoud:f31c7378a38a83305e9486a9f2d877bca298f0a5ca556724ff053861992016c6@ec2-54-247-120-169.eu-west-1.compute.amazonaws.com:5432/d875dtqr9j9ru'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '///sqlite:data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'oceanAvenue04'
 api = Api(app)
