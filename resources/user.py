@@ -1,5 +1,6 @@
-from flask_restful import Resource, reqparse
+from flask_restplus import Resource, reqparse
 from models.user import UserModel
+from api import api
 
 class UserRegister(Resource):
 
@@ -15,6 +16,10 @@ class UserRegister(Resource):
         help="This field cannot be blank."
     )
 
+    @api.doc(responses={
+        201: 'User created',
+        400: 'User already exists'
+    })
     def post(self):
         data = UserRegister.parser.parse_args()
 

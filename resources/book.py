@@ -1,7 +1,9 @@
-from flask_restful import Resource, reqparse
+from flask_restplus import Resource, reqparse
 from models.book import BookModel
+from api import api
 
 
+@api.route('/books/<int:id>')
 class Book(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('author',
@@ -12,6 +14,10 @@ class Book(Resource):
                         required=False)
 
     @staticmethod
+    @api.doc(responses={
+        200: 'Success',
+        404: 'Book not found'
+    })
     def get(id):
         book = BookModel.find_by_id(id)
         if book:
@@ -26,6 +32,10 @@ class Book(Resource):
         return {'message': 'Book deleted successfully.'}
 
     @staticmethod
+    @api.doc(responses={
+        200: 'Success',
+        400: 'Book doesn\'t exist'
+    })
     def put(id):
         book = BookModel.find_by_id(id)
 
@@ -59,6 +69,10 @@ class BookList(Resource):
         return {'books': [book.json() for book in BookModel.query.all()]}
 
     @staticmethod
+    @api.doc(responses={
+        201: 'Book created',
+        400: 'Book already exists'
+    })
     def post():
         data = Book.parser.parse_args()
         if BookModel.find_by_info(**data):
